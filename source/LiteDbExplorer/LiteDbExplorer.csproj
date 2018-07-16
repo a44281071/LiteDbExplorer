@@ -104,6 +104,7 @@
     <Compile Include="Controls\FileView.xaml.cs">
       <DependentUpon>FileView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BsonValueToGuidConverter.cs" />
     <Compile Include="Converters\BsonValueToNetValueConverter.cs" />
     <Compile Include="Converters\DoubleToGridLengthConverter .cs" />
     <Compile Include="Converters\EnumConverter.cs" />
