@@ -129,7 +129,7 @@ namespace LiteDbExplorer.Windows
 
     private DocumentFieldData NewField(string key, bool readOnly)
     {
-      var valueEdit = BsonValueEditor.GetBsonValueEditor(string.Format("[{0}]", key), currentDocument[key], currentDocument, readOnly);
+      var valueEdit = BsonValueEditor.GetBsonValueEditor(String.Format("[{0}]", key), currentDocument[key], currentDocument, readOnly);
       return new DocumentFieldData(key, valueEdit);
     }
 
@@ -187,7 +187,7 @@ namespace LiteDbExplorer.Windows
 
       if (currentDocument.Keys.Contains(fieldName))
       {
-        MessageBox.Show(string.Format("Field \"{0}\" already exists!", fieldName), "", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(String.Format("Field \"{0}\" already exists!", fieldName), "", MessageBoxButton.OK, MessageBoxImage.Error);
         return;
       }
 
@@ -203,7 +203,7 @@ namespace LiteDbExplorer.Windows
           newValue = new BsonValue(Guid.NewGuid());
           break;
         case "String":
-          newValue = new BsonValue(string.Empty);
+          newValue = new BsonValue(String.Empty);
           break;
 
         case "Boolean":

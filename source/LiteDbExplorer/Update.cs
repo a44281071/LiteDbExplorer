@@ -80,7 +80,7 @@ namespace LiteDbExplorer
             logger.Info("Installing new update to {0}, in {1} mode", Paths.ProgramFolder, portable);
             Task.Factory.StartNew(() =>
             {
-                Process.Start(updaterPath, string.Format(@"/ProgressOnly 1 {0} /D={1}", portable, Paths.ProgramFolder));
+                Process.Start(updaterPath, String.Format(@"/ProgressOnly 1 {0} /D={1}", portable, Paths.ProgramFolder));
             });
 
             Application.Current.Dispatcher.Invoke(() =>

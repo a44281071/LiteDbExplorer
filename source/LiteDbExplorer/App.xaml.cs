@@ -73,7 +73,7 @@ namespace LiteDbExplorer
         {
             var log = LogManager.Configuration.FindTargetByName("file") as FileTarget;
             logger.Error((Exception)e.ExceptionObject, "Unhandled exception: ");
-            MessageBox.Show(string.Format("Unhandled exception occured.\nAdditional information written into: {0}\n\nApplication will shutdown.", log.FileName),
+            MessageBox.Show(String.Format("Unhandled exception occured.\nAdditional information written into: {0}\n\nApplication will shutdown.", log.FileName),
                 "Unhandled Exception", MessageBoxButton.OK, MessageBoxImage.Error);
             Process.GetCurrentProcess().Kill();
         }

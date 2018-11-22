@@ -17,7 +17,7 @@ namespace LiteDbExplorer.Controls
         Path = new PropertyPath(bindingPath),
         Source = bindingSource,
         Mode = BindingMode.TwoWay,
-        Converter = new BsonValueToNetValueConverter(),
+        Converter = BsonValueToNetValueConverter.Current,
         UpdateSourceTrigger = UpdateSourceTrigger.Explicit
       };
       var guidBinding = new Binding()
@@ -25,7 +25,7 @@ namespace LiteDbExplorer.Controls
         Path = new PropertyPath(bindingPath),
         Source = bindingSource,
         Mode = BindingMode.TwoWay,
-        Converter = new BsonValueToGuidConverter(),
+        Converter = BsonValueToGuidConverter.Current,
         UpdateSourceTrigger = UpdateSourceTrigger.Default
       };
       if (bindingValue.IsArray)
@@ -147,12 +147,11 @@ namespace LiteDbExplorer.Controls
       }
       else if (bindingValue.IsObjectId)
       {
-        var text = new TextBlock()
+        var text = new TextBox()
         {
           Text = bindingValue.AsString,
-          IsEnabled = false
+          IsReadOnly = true
         };
-
         return text;
       }
       else if (bindingValue.IsGuid)

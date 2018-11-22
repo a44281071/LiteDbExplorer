@@ -69,13 +69,13 @@ namespace LiteDbExplorer
             Location = path;
             Name = Path.GetFileName(path);
 
-            if (string.IsNullOrEmpty(password))
+            if (String.IsNullOrEmpty(password))
             {
                 LiteDatabase = new LiteDatabase(path);
             }
             else
             {
-                LiteDatabase = new LiteDatabase(string.Format("Filename={0};Password={1}", path, password));
+                LiteDatabase = new LiteDatabase(String.Format("Filename={0};Password={1}", path, password));
             }
 
             UpdateCollections();
@@ -122,7 +122,7 @@ namespace LiteDbExplorer
         {
             if (LiteDatabase.GetCollectionNames().Contains(name))
             {
-                throw new Exception(string.Format("Cannot add collection \"{0}\", collection with that name already exists.", name));
+                throw new Exception(String.Format("Cannot add collection \"{0}\", collection with that name already exists.", name));
             }
 
             var coll = LiteDatabase.GetCollection(name);

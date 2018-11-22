@@ -37,15 +37,9 @@ namespace LiteDbExplorer
     private static NLog.Logger logger = LogManager.GetCurrentClassLogger();
     private readonly ConcurrentDictionary<string, string> used_database = new ConcurrentDictionary<string, string>();
 
-    public Paths PathDefinitions
-    {
-      get; set;
-    } = new Paths();
+    public Paths PathDefinitions { get; set; } = new Paths();
 
-    public ObservableCollection<DatabaseReference> Databases
-    {
-      get; set;
-    } = new ObservableCollection<DatabaseReference>();
+    public ObservableCollection<DatabaseReference> Databases { get; set; } = new ObservableCollection<DatabaseReference>();
 
     private IEnumerable<DocumentReference> DbSelectedItems
     {
@@ -122,7 +116,7 @@ namespace LiteDbExplorer
         }
         else
         {
-          Title = string.Format("{0} - LiteDB Explorer {1}", selectedDatabase.Name, Versions.CurrentVersion);
+          Title = String.Format("{0} - LiteDB Explorer {1}", selectedDatabase.Name, Versions.CurrentVersion);
         }
       }
     }
@@ -531,7 +525,7 @@ namespace LiteDbExplorer
       try
       {
         if (MessageBox.Show(
-            string.Format("Are you sure you want to drop collection \"{0}\"?", SelectedCollection.Name),
+            String.Format("Are you sure you want to drop collection \"{0}\"?", SelectedCollection.Name),
             "Are you sure?",
             MessageBoxButton.YesNo,
             MessageBoxImage.Question
@@ -594,7 +588,7 @@ namespace LiteDbExplorer
 
     private void FindNextCommand_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-      if (string.IsNullOrEmpty(TextSearch.Text))
+      if (String.IsNullOrEmpty(TextSearch.Text))
       {
         return;
       }
@@ -626,7 +620,7 @@ namespace LiteDbExplorer
 
     private void FindPreviousCommand_Executed(object sender, ExecutedRoutedEventArgs e)
     {
-      if (string.IsNullOrEmpty(TextSearch.Text))
+      if (String.IsNullOrEmpty(TextSearch.Text))
       {
         return;
       }
@@ -761,9 +755,9 @@ namespace LiteDbExplorer
         Header = new TextBlock() { Text = key },
         DisplayMemberBinding = new Binding()
         {
-          Path = new PropertyPath(string.Format("LiteDocument[{0}]", key)),
+          Path = new PropertyPath(String.Format("LiteDocument[{0}]", key)),
           Mode = BindingMode.OneWay,
-          Converter = new BsonValueToStringConverter()
+          Converter = BsonValueToStringConverter.Current
         }
       });
     }
@@ -831,7 +825,7 @@ namespace LiteDbExplorer
       for (int i = 0; i < document.LiteDocument.Keys.Count; i++)
       {
         var key = document.LiteDocument.Keys.ElementAt(i);
-        var valueEdit = BsonValueEditor.GetBsonValueEditor(string.Format("[{0}]", key), document.LiteDocument[key], document.LiteDocument, true);
+        var valueEdit = BsonValueEditor.GetBsonValueEditor(String.Format("[{0}]", key), document.LiteDocument[key], document.LiteDocument, true);
         controls.Add(new DocumentFieldData(key, valueEdit));
       }
 
@@ -896,7 +890,10 @@ namespace LiteDbExplorer
       string password = null;
       if (DatabaseReference.IsDbPasswordProtected(path))
       {
-        used_database.TryGetValue(path, out string used_pwd);
+        if (!used_database.TryGetValue(path, out string used_pwd))
+        {
+          used_pwd = Properties.Settings.Default.DefaultPassword;
+        }
         if (InputBoxWindow.ShowDialog("Database is password protected, enter password:", "Database password.", used_pwd, out password) != true)
         {
           return;
@@ -1059,8 +1056,7 @@ namespace LiteDbExplorer
       {
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
         {
-          string[] files = e.Data.GetData(DataFormats.FileDrop, false) as string[];
-          if (files != null)
+          if (e.Data.GetData(DataFormats.FileDrop, false) is string[] files)
           {
             foreach (var f in files)
             {

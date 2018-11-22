@@ -131,7 +131,7 @@ namespace LiteDbExplorer.Windows
             switch (menuItem.Header as string)
             {
                 case "String":
-                    newValue = new BsonValue(string.Empty);
+                    newValue = new BsonValue(String.Empty);
                     break;
                 case "Boolean":
                     newValue = new BsonValue(false);

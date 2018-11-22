@@ -88,7 +88,7 @@ namespace LiteDbExplorer
 
         private void RecentFiles_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            File.WriteAllText(RecentFilesPath, string.Join(Environment.NewLine, RecentFiles));
+            File.WriteAllText(RecentFilesPath, String.Join(Environment.NewLine, RecentFiles));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

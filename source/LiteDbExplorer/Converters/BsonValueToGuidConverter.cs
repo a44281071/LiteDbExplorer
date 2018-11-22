@@ -12,6 +12,9 @@ namespace LiteDbExplorer.Converters
   [ValueConversion(typeof(Guid?), typeof(string))]
   public class BsonValueToGuidConverter : IValueConverter
   {
+    private static readonly Lazy<BsonValueToGuidConverter> _Current = new Lazy<BsonValueToGuidConverter>(() => new BsonValueToGuidConverter());
+    public static BsonValueToGuidConverter Current => _Current.Value;
+
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
       return value == null

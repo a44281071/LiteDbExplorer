@@ -1,389 +1,526 @@
 ﻿<Window x:Class="LiteDbExplorer.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LiteDbExplorer"
-        xmlns:converters="clr-namespace:LiteDbExplorer.Converters"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:controls="clr-namespace:LiteDbExplorer.Controls"
-        mc:Ignorable="d"
-        Title="LiteDB Explorer" Width="1024" Height="740" 
+        xmlns:converters="clr-namespace:LiteDbExplorer.Converters"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:LiteDbExplorer"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Name="WindowMain"
+        Title="LiteDB Explorer"
+        Width="1024"
+        Height="740"
+        Closed="Window_Closed"
+        Loaded="WindowMain_Loaded"
+        LocationChanged="WindowMain_LocationChanged"
+        SizeChanged="WindowMain_SizeChanged"
         WindowStartupLocation="CenterScreen"
-        Closed="Window_Closed" Loaded="WindowMain_Loaded"
-        LocationChanged="WindowMain_LocationChanged" SizeChanged="WindowMain_SizeChanged"
-        Name="WindowMain">
+        mc:Ignorable="d">
 
-    <Window.Resources>
-        <converters:EnumConverter x:Key="EnumConverter" />
-        <converters:DoubleToGridLengthConverter x:Key="DoubleToGridLengthConverter" />
-    </Window.Resources>
-    
-    <Window.CommandBindings>
-        <CommandBinding Command="Open" Executed="OpenCommand_Executed" CanExecute="OpenCommand_CanExecute" />
-        <CommandBinding Command="New" Executed="NewCommand_Executed" CanExecute="NewCommand_CanExecute" />
-        <CommandBinding Command="Close" Executed="CloseCommand_Executed" CanExecute="CloseCommand_CanExecute" />
-        <CommandBinding Command="Copy" Executed="CopyCommand_Executed" CanExecute="CopyCommand_CanExecute" />
-        <CommandBinding Command="Paste" Executed="PasteCommand_Executed" CanExecute="PasteCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.EditDbProperties" Executed="EditDbPropertiesCommand_Executed" CanExecute="EditDbPropertiesCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.Exit" Executed="ExitCommand_Executed" CanExecute="ExitCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.Add" Executed="AddCommand_Executed" CanExecute="AddCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.AddFile" Executed="AddFileCommand_Executed" CanExecute="AddFileCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.Edit" Executed="EditCommand_Executed" CanExecute="EditCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.Remove" Executed="RemoveCommand_Executed" CanExecute="RemoveCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.Export" Executed="ExportCommand_Executed" CanExecute="ExportCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.RefreshCollection" Executed="RefreshCollectionCommand_Executed" CanExecute="RefreshCollectionCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.AddCollection" Executed="AddCollectionCommand_Executed" CanExecute="AddCollectionCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.RenameCollection" Executed="RenameCollectionCommand_Executed" CanExecute="RenameCollectionCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.DropCollection" Executed="DropCollectionCommand_Executed" CanExecute="DropCollectionCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.RefreshDatabase" Executed="RefreshDatabaseCommand_Executed" CanExecute="RefreshDatabaseCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.Find" Executed="FindCommand_Executed" CanExecute="FindCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.FindNext" Executed="FindNextCommand_Executed" CanExecute="FindNextCommand_CanExecute" />
-        <CommandBinding Command="local:Commands.FindPrevious" Executed="FindPreviousCommand_Executed" CanExecute="FindPreviousCommand_CanExecute" />
-    </Window.CommandBindings>
-    
-    <DockPanel>
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
-                <MenuItem Command="New">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/newdatabase.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="Open">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/opendb.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Header="Recent files" Name="MenuRecentItems" ItemsSource="{Binding Path=PathDefinitions.RecentFiles, ElementName=WindowMain}">
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="MenuItem">
-                            <Setter Property="Tag" Value="{Binding}" />
-                            <Setter Property="Header" Value="{Binding}" />
-                            <EventSetter Event="Click" Handler="RecentMenuItem_Click" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                </MenuItem>
-                <Separator/>
-                <MenuItem Command="local:Commands.EditDbProperties" />
-                <MenuItem Command="Close">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/close.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator />
-                <MenuItem Command="local:Commands.Exit"/>
-            </MenuItem>
-            <MenuItem Header="_Edit">
-                <MenuItem Command="local:Commands.Add">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/createitem.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="local:Commands.Edit">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/updateitem.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="local:Commands.Remove">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/deleteitem.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="local:Commands.Export">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/export.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator />
-                <MenuItem Command="Copy">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/copy.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <MenuItem Command="Paste">
-                    <MenuItem.Icon>
-                        <Image Source="/Images/paste.png" />
-                    </MenuItem.Icon>
-                </MenuItem>
-                <Separator />
-                <MenuItem Command="local:Commands.Find" />
-                <MenuItem Command="local:Commands.FindNext" />
-                <MenuItem Command="local:Commands.FindPrevious" />
-            </MenuItem>
-            <MenuItem Header="View">
-                <MenuItem Header="Field sort order">
-                    <MenuItem Header="Alphabetical" IsCheckable="True"
-                              IsChecked="{Binding Path=Settings.FieldSortOrder, Converter={StaticResource EnumConverter}, ConverterParameter={x:Static local:FieldSortOrder.Alphabetical}, Source={x:Static Application.Current}}"/>
-                    <MenuItem Header="Original" IsCheckable="True" 
-                              IsChecked="{Binding Path=Settings.FieldSortOrder, Converter={StaticResource EnumConverter}, ConverterParameter={x:Static local:FieldSortOrder.Original}, Source={x:Static Application.Current}}"/>
-                </MenuItem>
-            </MenuItem>
-            <MenuItem Header="Help">
-                <MenuItem Header="Report issue..." Click="IssueMenuItem_Click"/>
-                <MenuItem Header="Homepage..." Click="HomepageMenuItem_Click"/>
-            </MenuItem>
-        </Menu>
+  <Window.Resources>
+    <converters:EnumConverter x:Key="EnumConverter" />
+    <converters:DoubleToGridLengthConverter x:Key="DoubleToGridLengthConverter" />
+  </Window.Resources>
 
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
-                <Button Name="ButtonOpen" Command="Open" ContextMenuService.IsEnabled="False">
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="/Images/opendb.png" Margin="0,0,5,0" />
-                            <Border Background="Transparent" BorderThickness="1" PreviewMouseLeftButtonDown="RecentItemMoreBorder_MouseLeftButtonDown">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="BorderBrush" Value="Gray" />
-                                            </Trigger>
-                                            <Trigger Property="IsMouseOver" Value="False">
-                                                <Setter Property="BorderBrush" Value="Transparent" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <Path Margin="4" VerticalAlignment="Center" Width="6" Fill="#FF527DB5" Stretch="Uniform" HorizontalAlignment="Right" Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z "/>
-                            </Border>
-                        </StackPanel>
-                    </Button.Content>
-                    <Button.ContextMenu>
-                        <ContextMenu ItemsSource="{Binding Path=ItemsSource, Source={x:Reference Name=MenuRecentItems}}" >
-                            <ContextMenu.ItemContainerStyle>
-                                <Style TargetType="MenuItem">
-                                    <Setter Property="Tag" Value="{Binding}" />
-                                    <EventSetter Event="Click" Handler="RecentMenuItem_Click" />
-                                </Style>
-                            </ContextMenu.ItemContainerStyle>
-                        </ContextMenu>
-                    </Button.ContextMenu>
-                </Button>
-                <Separator />
-                <Button Command="local:Commands.Add">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Images/createitem.png"/>
-                        <TextBlock Text="Add"  VerticalAlignment="Center" Margin="2,0,5,0" FontSize="16"/>
-                    </StackPanel>
-                </Button>
-                <Button Command="local:Commands.Edit">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Images/updateitem.png" />
-                        <TextBlock Text="Edit" VerticalAlignment="Center"  Margin="2,0,5,0" FontSize="16"/>
-                    </StackPanel>
-                </Button>
-                <Button Command="local:Commands.Remove">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Images/deleteitem.png" />
-                        <TextBlock Text="Delete" VerticalAlignment="Center"  Margin="2,0,5,0" FontSize="16"/>
-                    </StackPanel>
-                </Button>
-                <Button Command="local:Commands.Export">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Images/export.png" />
-                        <TextBlock Text="Export" VerticalAlignment="Center"  Margin="2,0,5,0" FontSize="16"/>
-                    </StackPanel>
-                </Button>
-                <Separator />
-                <Button Command="local:Commands.RefreshCollection">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="/Images/refresh.png" />
-                        <TextBlock Text="Refresh" VerticalAlignment="Center"  Margin="2,0,5,0" FontSize="16"/>
-                    </StackPanel>
-                </Button>
-            </ToolBar>
-        </ToolBarTray>
+  <Window.CommandBindings>
+    <CommandBinding CanExecute="OpenCommand_CanExecute"
+                    Command="Open"
+                    Executed="OpenCommand_Executed" />
+    <CommandBinding CanExecute="NewCommand_CanExecute"
+                    Command="New"
+                    Executed="NewCommand_Executed" />
+    <CommandBinding CanExecute="CloseCommand_CanExecute"
+                    Command="Close"
+                    Executed="CloseCommand_Executed" />
+    <CommandBinding CanExecute="CopyCommand_CanExecute"
+                    Command="Copy"
+                    Executed="CopyCommand_Executed" />
+    <CommandBinding CanExecute="PasteCommand_CanExecute"
+                    Command="Paste"
+                    Executed="PasteCommand_Executed" />
+    <CommandBinding CanExecute="EditDbPropertiesCommand_CanExecute"
+                    Command="local:Commands.EditDbProperties"
+                    Executed="EditDbPropertiesCommand_Executed" />
+    <CommandBinding CanExecute="ExitCommand_CanExecute"
+                    Command="local:Commands.Exit"
+                    Executed="ExitCommand_Executed" />
+    <CommandBinding CanExecute="AddCommand_CanExecute"
+                    Command="local:Commands.Add"
+                    Executed="AddCommand_Executed" />
+    <CommandBinding CanExecute="AddFileCommand_CanExecute"
+                    Command="local:Commands.AddFile"
+                    Executed="AddFileCommand_Executed" />
+    <CommandBinding CanExecute="EditCommand_CanExecute"
+                    Command="local:Commands.Edit"
+                    Executed="EditCommand_Executed" />
+    <CommandBinding CanExecute="RemoveCommand_CanExecute"
+                    Command="local:Commands.Remove"
+                    Executed="RemoveCommand_Executed" />
+    <CommandBinding CanExecute="ExportCommand_CanExecute"
+                    Command="local:Commands.Export"
+                    Executed="ExportCommand_Executed" />
+    <CommandBinding CanExecute="RefreshCollectionCommand_CanExecute"
+                    Command="local:Commands.RefreshCollection"
+                    Executed="RefreshCollectionCommand_Executed" />
+    <CommandBinding CanExecute="AddCollectionCommand_CanExecute"
+                    Command="local:Commands.AddCollection"
+                    Executed="AddCollectionCommand_Executed" />
+    <CommandBinding CanExecute="RenameCollectionCommand_CanExecute"
+                    Command="local:Commands.RenameCollection"
+                    Executed="RenameCollectionCommand_Executed" />
+    <CommandBinding CanExecute="DropCollectionCommand_CanExecute"
+                    Command="local:Commands.DropCollection"
+                    Executed="DropCollectionCommand_Executed" />
+    <CommandBinding CanExecute="RefreshDatabaseCommand_CanExecute"
+                    Command="local:Commands.RefreshDatabase"
+                    Executed="RefreshDatabaseCommand_Executed" />
+    <CommandBinding CanExecute="FindCommand_CanExecute"
+                    Command="local:Commands.Find"
+                    Executed="FindCommand_Executed" />
+    <CommandBinding CanExecute="FindNextCommand_CanExecute"
+                    Command="local:Commands.FindNext"
+                    Executed="FindNextCommand_Executed" />
+    <CommandBinding CanExecute="FindPreviousCommand_CanExecute"
+                    Command="local:Commands.FindPrevious"
+                    Executed="FindPreviousCommand_Executed" />
+  </Window.CommandBindings>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding Path=Settings.MainSplitterSize, Mode=TwoWay, Source={x:Static Application.Current}, Converter={StaticResource DoubleToGridLengthConverter}}" />
-                <ColumnDefinition Width="4" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+  <DockPanel>
+    <Menu DockPanel.Dock="Top">
+      <MenuItem Header="_File">
+        <MenuItem Command="New">
+          <MenuItem.Icon>
+            <Image Source="/Images/newdatabase.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="Open">
+          <MenuItem.Icon>
+            <Image Source="/Images/opendb.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Name="MenuRecentItems"
+                  ItemsSource="{Binding Path=PathDefinitions.RecentFiles, ElementName=WindowMain}"
+                  Header="Recent files">
+          <ItemsControl.ItemContainerStyle>
+            <Style TargetType="MenuItem">
+              <Setter Property="Tag" Value="{Binding}" />
+              <Setter Property="Header" Value="{Binding}" />
+              <EventSetter Event="Click"
+                           Handler="RecentMenuItem_Click" />
+            </Style>
+          </ItemsControl.ItemContainerStyle>
+        </MenuItem>
+        <Separator />
+        <MenuItem Command="local:Commands.EditDbProperties" />
+        <MenuItem Command="Close">
+          <MenuItem.Icon>
+            <Image Source="/Images/close.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Command="local:Commands.Exit" />
+      </MenuItem>
+      <MenuItem Header="_Edit">
+        <MenuItem Command="local:Commands.Add">
+          <MenuItem.Icon>
+            <Image Source="/Images/createitem.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="local:Commands.Edit">
+          <MenuItem.Icon>
+            <Image Source="/Images/updateitem.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="local:Commands.Remove">
+          <MenuItem.Icon>
+            <Image Source="/Images/deleteitem.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="local:Commands.Export">
+          <MenuItem.Icon>
+            <Image Source="/Images/export.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Command="Copy">
+          <MenuItem.Icon>
+            <Image Source="/Images/copy.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Command="Paste">
+          <MenuItem.Icon>
+            <Image Source="/Images/paste.png" />
+          </MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Command="local:Commands.Find" />
+        <MenuItem Command="local:Commands.FindNext" />
+        <MenuItem Command="local:Commands.FindPrevious" />
+      </MenuItem>
+      <MenuItem Header="View">
+        <MenuItem Header="Field sort order">
+          <MenuItem IsChecked="{Binding Path=Settings.FieldSortOrder, Converter={StaticResource EnumConverter}, ConverterParameter={x:Static local:FieldSortOrder.Alphabetical}, Source={x:Static Application.Current}}"
+                    Header="Alphabetical"
+                    IsCheckable="True" />
+          <MenuItem IsChecked="{Binding Path=Settings.FieldSortOrder, Converter={StaticResource EnumConverter}, ConverterParameter={x:Static local:FieldSortOrder.Original}, Source={x:Static Application.Current}}"
+                    Header="Original"
+                    IsCheckable="True" />
+        </MenuItem>
+      </MenuItem>
+      <MenuItem Header="Help">
+        <MenuItem Click="IssueMenuItem_Click"
+                  Header="Report issue..." />
+        <MenuItem Click="HomepageMenuItem_Click"
+                  Header="Homepage..." />
+      </MenuItem>
+    </Menu>
 
-            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
+    <ToolBarTray DockPanel.Dock="Top">
+      <ToolBar>
+        <Button Name="ButtonOpen"
+                Command="Open"
+                ContextMenuService.IsEnabled="False">
+          <Button.Content>
+            <StackPanel Orientation="Horizontal">
+              <Image Source="/Images/opendb.png"
+                     Margin="0,0,5,0" />
+              <Border Background="Transparent"
+                      BorderThickness="1"
+                      PreviewMouseLeftButtonDown="RecentItemMoreBorder_MouseLeftButtonDown">
+                <Border.Style>
+                  <Style TargetType="Border">
+                    <Style.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="BorderBrush" Value="Gray" />
+                      </Trigger>
+                      <Trigger Property="IsMouseOver" Value="False">
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                      </Trigger>
+                    </Style.Triggers>
+                  </Style>
+                </Border.Style>
+                <Path Width="6"
+                      Margin="4"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center"
+                      Data="F1 M 301.14,-189.041L 311.57,-189.041L 306.355,-182.942L 301.14,-189.041 Z "
+                      Fill="#FF527DB5"
+                      Stretch="Uniform" />
+              </Border>
+            </StackPanel>
+          </Button.Content>
+          <Button.ContextMenu>
+            <ContextMenu ItemsSource="{Binding Path=ItemsSource, Source={x:Reference Name=MenuRecentItems}}">
+              <ContextMenu.ItemContainerStyle>
+                <Style TargetType="MenuItem">
+                  <Setter Property="Tag" Value="{Binding}" />
+                  <EventSetter Event="Click"
+                               Handler="RecentMenuItem_Click" />
+                </Style>
+              </ContextMenu.ItemContainerStyle>
+            </ContextMenu>
+          </Button.ContextMenu>
+        </Button>
+        <Separator />
+        <Button Command="local:Commands.Add">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="/Images/createitem.png" />
+            <TextBlock Margin="2,0,5,0"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       Text="Add" />
+          </StackPanel>
+        </Button>
+        <Button Command="local:Commands.Edit">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="/Images/updateitem.png" />
+            <TextBlock Margin="2,0,5,0"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       Text="Edit" />
+          </StackPanel>
+        </Button>
+        <Button Command="local:Commands.Remove">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="/Images/deleteitem.png" />
+            <TextBlock Margin="2,0,5,0"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       Text="Delete" />
+          </StackPanel>
+        </Button>
+        <Button Command="local:Commands.Export">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="/Images/export.png" />
+            <TextBlock Margin="2,0,5,0"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       Text="Export" />
+          </StackPanel>
+        </Button>
+        <Separator />
+        <Button Command="local:Commands.RefreshCollection">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="/Images/refresh.png" />
+            <TextBlock Margin="2,0,5,0"
+                       VerticalAlignment="Center"
+                       FontSize="16"
+                       Text="Refresh" />
+          </StackPanel>
+        </Button>
+      </ToolBar>
+    </ToolBarTray>
 
-            <DockPanel Grid.Column="0" AllowDrop="True" 
-                       Background="Transparent" Drop="LeftPanel_Drop">
-                <Border Name="DockSearch" DockPanel.Dock="Top" BorderThickness="1,1,1,0" BorderBrush="{Binding BorderBrush, ElementName=TreeDatabasese}">
-                    <StackPanel>
-                        <DockPanel Margin="5,5,5,0">
-                            <Button FontFamily="Marlett" Content="r" Padding="2" DockPanel.Dock="Right" Name="ButtonCloseSearch" Click="ButtonCloseSearch_Click"
-                                    VerticalContentAlignment="Center" FontWeight="ExtraBold"/>
-                            <TextBlock Text="Search" VerticalAlignment="Center" />
-                        </DockPanel>
-                        <Grid Margin="5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="{Binding Path=Settings.MainSplitterSize, Mode=TwoWay, Source={x:Static Application.Current}, Converter={StaticResource DoubleToGridLengthConverter}}" />
+        <ColumnDefinition Width="4" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
 
-                            <TextBox Grid.Column="0" Grid.Row="0" Name="TextSearch" Margin="5">
-                                <TextBox.InputBindings>
-                                    <KeyBinding Key="Return" Command="local:Commands.FindNext" />
-                                </TextBox.InputBindings>
-                            </TextBox>
-                            <CheckBox Grid.Column="0" Grid.Row="1" Name="CheckSearchCase" 
-                                      Content="Match case" VerticalContentAlignment="Center" Margin="5"/>
+      <GridSplitter Grid.Column="1"
+                    Width="5"
+                    HorizontalAlignment="Stretch" />
 
-                            <Button Grid.Column="1" Grid.Row="0" Content="Find Next" Margin="5"
-                                    Command="local:Commands.FindNext" />
-                            <Button Grid.Column="1" Grid.Row="1" Content="Find Previous" Margin="5"
-                                    Command="local:Commands.FindPrevious" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <TreeView Name="TreeDatabasese" DockPanel.Dock="Top" Padding="0,5,0,5"
-                          SelectedItemChanged="TreeDatabasese_SelectedItemChanged"
-                          ItemsSource="{Binding Databases, RelativeSource={RelativeSource AncestorType=Window}}">
-                    <TreeView.Resources>
-                        <Style TargetType="TreeViewItem">
-                            <Setter Property="IsExpanded" Value="True" />
-                            <EventSetter Event="PreviewMouseRightButtonDown" Handler="OnPreviewMouseRightButtonDown" />
-                        </Style>
-                        <HierarchicalDataTemplate DataType="{x:Type local:DatabaseReference}" ItemsSource="{Binding Collections}">
-                            <StackPanel Orientation="Horizontal" ToolTip="{Binding Location}">
-                                <StackPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="local:Commands.AddFile">
-                                            <MenuItem.Icon>
-                                                <Image Source="/Images/uploadfile.png" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Command="local:Commands.AddCollection">
-                                            <MenuItem.Icon>
-                                                <Image Source="/Images/table.png" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator/>
-                                        <MenuItem Command="local:Commands.RefreshDatabase">
-                                            <MenuItem.Icon>
-                                                <Image Source="/Images/refresh.png" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Command="local:Commands.EditDbProperties" />
-                                        <Separator/>
-                                        <MenuItem Command="Close"/>
-                                    </ContextMenu>
-                                </StackPanel.ContextMenu>
-                                <Image Source="/Images/database.png" Width="16" RenderOptions.BitmapScalingMode="Linear"/>
-                                <TextBlock Text="{Binding Name}" Padding="5"/>
-                            </StackPanel>
-                        </HierarchicalDataTemplate>
-                        <DataTemplate DataType="{x:Type local:CollectionReference}">                        
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="local:Commands.AddCollection"/>
-                                        <MenuItem Command="local:Commands.RenameCollection"/>
-                                        <MenuItem Command="local:Commands.DropCollection"/>
-                                    </ContextMenu>
-                                </StackPanel.ContextMenu>                            
-                                <ContentPresenter Content="{Binding}">
-                                    <ContentPresenter.Resources>
-                                        <DataTemplate DataType="{x:Type local:FileCollectionReference}">
-                                            <Image Source="/Images/files.png"/>
-                                        </DataTemplate>
-                                        <DataTemplate DataType="{x:Type local:CollectionReference}">
-                                            <Image Source="/Images/table.png"/>
-                                        </DataTemplate>
-                                    </ContentPresenter.Resources>
-                                </ContentPresenter>
-                                <TextBlock Text="{Binding Name}" Padding="5"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </TreeView.Resources>
-                </TreeView>
-
-                <Border BorderBrush="{Binding BorderBrush, ElementName=TreeDatabasese}" BorderThickness="1,0,1,1" DockPanel.Dock="Top" Padding="0,5,0,5"
-                        Name="BorderDocPreview" Visibility="Collapsed">
-                    <DockPanel DockPanel.Dock="Top">
-                        <TextBlock Text="Document Preview" Padding="5,0,5,0" DockPanel.Dock="Top"/>   
-                        <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" DockPanel.Dock="Top">
-                            <ItemsControl Name="ItemsDocPreview" Margin="5,0,5,0">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Grid.IsSharedSizeScope="True"/>
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition SharedSizeGroup="ColumnOne" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Name}" TextAlignment="Right" Margin="3"/>
-                                            <ContentPresenter Content="{Binding EditControl}" Margin="3" Grid.Column="1"/>
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </ScrollViewer>
-                    </DockPanel>
-                </Border>
-
-                <Border BorderBrush="{Binding BorderBrush, ElementName=TreeDatabasese}" BorderThickness="1,0,1,1" DockPanel.Dock="Top" Padding="0,5,0,5"
-                        Name="BorderFilePreview" Visibility="Collapsed">
-                    <DockPanel DockPanel.Dock="Top">
-                        <TextBlock Text="File Preview" Padding="5,0,5,0" DockPanel.Dock="Top"/>                       
-                        <controls:FileView x:Name="FilePreview" DockPanel.Dock="Top"/>
-                    </DockPanel>
-                </Border>
+      <DockPanel Grid.Column="0"
+                 AllowDrop="True"
+                 Background="Transparent"
+                 Drop="LeftPanel_Drop">
+        <Border Name="DockSearch"
+                BorderBrush="{Binding BorderBrush, ElementName=TreeDatabasese}"
+                BorderThickness="1,1,1,0"
+                DockPanel.Dock="Top">
+          <StackPanel>
+            <DockPanel Margin="5,5,5,0">
+              <Button Name="ButtonCloseSearch"
+                      Padding="2"
+                      VerticalContentAlignment="Center"
+                      Click="ButtonCloseSearch_Click"
+                      Content="r"
+                      DockPanel.Dock="Right"
+                      FontFamily="Marlett"
+                      FontWeight="ExtraBold" />
+              <TextBlock VerticalAlignment="Center"
+                         Text="Search" />
             </DockPanel>
+            <Grid Margin="5">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
 
-            <ListView Grid.Column="2" Name="ListCollectionData" Visibility="Collapsed"
-                      MouseDoubleClick="ListCollectionData_MouseDoubleClick"
-                      SelectionChanged="ListCollectionData_SelectionChanged">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Height" Value="25"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="local:Commands.Add">
-                            <MenuItem.Icon>
-                                <Image Source="/Images/createitem.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Command="local:Commands.Edit">
-                            <MenuItem.Icon>
-                                <Image Source="/Images/updateitem.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Command="local:Commands.Remove">
-                            <MenuItem.Icon>
-                                <Image Source="/Images/deleteitem.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Command="local:Commands.Export">
-                            <MenuItem.Icon>
-                                <Image Source="/Images/export.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <Separator />
-                        <MenuItem Command="Copy">
-                            <MenuItem.Icon>
-                                <Image Source="/Images/copy.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Command="Paste">
-                            <MenuItem.Icon>
-                                <Image Source="/Images/paste.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                    </ContextMenu>
-                </ListView.ContextMenu>
-                <ListView.View>
-                    <GridView x:Name="GridCollectionData" />
-                </ListView.View>
-            </ListView>
-        </Grid>
-    </DockPanel>
+              <TextBox Name="TextSearch"
+                       Grid.Row="0"
+                       Grid.Column="0"
+                       Margin="5">
+                <TextBox.InputBindings>
+                  <KeyBinding Key="Return"
+                              Command="local:Commands.FindNext" />
+                </TextBox.InputBindings>
+              </TextBox>
+              <CheckBox Name="CheckSearchCase"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="5"
+                        VerticalContentAlignment="Center"
+                        Content="Match case" />
+
+              <Button Grid.Row="0"
+                      Grid.Column="1"
+                      Margin="5"
+                      Command="local:Commands.FindNext"
+                      Content="Find Next" />
+              <Button Grid.Row="1"
+                      Grid.Column="1"
+                      Margin="5"
+                      Command="local:Commands.FindPrevious"
+                      Content="Find Previous" />
+            </Grid>
+          </StackPanel>
+        </Border>
+
+        <TreeView Name="TreeDatabasese"
+                  ItemsSource="{Binding Databases, RelativeSource={RelativeSource AncestorType=Window}}"
+                  Padding="0,5,0,5"
+                  DockPanel.Dock="Top"
+                  SelectedItemChanged="TreeDatabasese_SelectedItemChanged">
+          <TreeView.Resources>
+            <Style TargetType="TreeViewItem">
+              <Setter Property="IsExpanded" Value="True" />
+              <EventSetter Event="PreviewMouseRightButtonDown"
+                           Handler="OnPreviewMouseRightButtonDown" />
+            </Style>
+            <HierarchicalDataTemplate ItemsSource="{Binding Collections}"
+                                      DataType="{x:Type local:DatabaseReference}">
+              <StackPanel Orientation="Horizontal"
+                          ToolTip="{Binding Location}">
+                <StackPanel.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Command="local:Commands.AddFile">
+                      <MenuItem.Icon>
+                        <Image Source="/Images/uploadfile.png" />
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="local:Commands.AddCollection">
+                      <MenuItem.Icon>
+                        <Image Source="/Images/table.png" />
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Command="local:Commands.RefreshDatabase">
+                      <MenuItem.Icon>
+                        <Image Source="/Images/refresh.png" />
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="local:Commands.EditDbProperties" />
+                    <Separator />
+                    <MenuItem Command="Close" />
+                  </ContextMenu>
+                </StackPanel.ContextMenu>
+                <Image Width="16"
+                       Source="/Images/database.png"
+                       RenderOptions.BitmapScalingMode="Linear" />
+                <TextBlock Padding="5"
+                           Text="{Binding Name}" />
+              </StackPanel>
+            </HierarchicalDataTemplate>
+            <DataTemplate DataType="{x:Type local:CollectionReference}">
+              <StackPanel Orientation="Horizontal">
+                <StackPanel.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Command="local:Commands.AddCollection" />
+                    <MenuItem Command="local:Commands.RenameCollection" />
+                    <MenuItem Command="local:Commands.DropCollection" />
+                  </ContextMenu>
+                </StackPanel.ContextMenu>
+                <ContentPresenter Content="{Binding}">
+                  <ContentPresenter.Resources>
+                    <DataTemplate DataType="{x:Type local:FileCollectionReference}">
+                      <Image Source="/Images/files.png" />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type local:CollectionReference}">
+                      <Image Source="/Images/table.png" />
+                    </DataTemplate>
+                  </ContentPresenter.Resources>
+                </ContentPresenter>
+                <TextBlock Padding="5"
+                           Text="{Binding Name}" />
+              </StackPanel>
+            </DataTemplate>
+          </TreeView.Resources>
+        </TreeView>
+
+        <Border Name="BorderDocPreview"
+                Padding="0,5,0,5"
+                BorderBrush="{Binding BorderBrush, ElementName=TreeDatabasese}"
+                BorderThickness="1,0,1,1"
+                DockPanel.Dock="Top"
+                Visibility="Collapsed">
+          <DockPanel DockPanel.Dock="Top">
+            <TextBlock Padding="5,0,5,0"
+                       DockPanel.Dock="Top"
+                       Text="Document Preview" />
+            <ScrollViewer DockPanel.Dock="Top"
+                          HorizontalScrollBarVisibility="Disabled"
+                          VerticalScrollBarVisibility="Auto">
+              <ItemsControl Name="ItemsDocPreview"
+                            Margin="5,0,5,0">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Grid.IsSharedSizeScope="True" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition SharedSizeGroup="ColumnOne" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Margin="3"
+                                 Text="{Binding Name}"
+                                 TextAlignment="Right" />
+                      <ContentPresenter Grid.Column="1"
+                                        Margin="3"
+                                        Content="{Binding EditControl}" />
+                    </Grid>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </DockPanel>
+        </Border>
+
+        <Border Name="BorderFilePreview"
+                Padding="0,5,0,5"
+                BorderBrush="{Binding BorderBrush, ElementName=TreeDatabasese}"
+                BorderThickness="1,0,1,1"
+                DockPanel.Dock="Top"
+                Visibility="Collapsed">
+          <DockPanel DockPanel.Dock="Top">
+            <TextBlock Padding="5,0,5,0"
+                       DockPanel.Dock="Top"
+                       Text="File Preview" />
+            <controls:FileView x:Name="FilePreview"
+                               DockPanel.Dock="Top" />
+          </DockPanel>
+        </Border>
+      </DockPanel>
+
+      <ListView Name="ListCollectionData"
+                Grid.Column="2"
+                MouseDoubleClick="ListCollectionData_MouseDoubleClick"
+                SelectionChanged="ListCollectionData_SelectionChanged"
+                Visibility="Collapsed">
+        <ListView.ItemContainerStyle>
+          <Style TargetType="ListViewItem">
+            <Setter Property="Height" Value="25" />
+          </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.ContextMenu>
+          <ContextMenu>
+            <MenuItem Command="local:Commands.Add">
+              <MenuItem.Icon>
+                <Image Source="/Images/createitem.png" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="local:Commands.Edit">
+              <MenuItem.Icon>
+                <Image Source="/Images/updateitem.png" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="local:Commands.Remove">
+              <MenuItem.Icon>
+                <Image Source="/Images/deleteitem.png" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="local:Commands.Export">
+              <MenuItem.Icon>
+                <Image Source="/Images/export.png" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Command="Copy">
+              <MenuItem.Icon>
+                <Image Source="/Images/copy.png" />
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Command="Paste">
+              <MenuItem.Icon>
+                <Image Source="/Images/paste.png" />
+              </MenuItem.Icon>
+            </MenuItem>
+          </ContextMenu>
+        </ListView.ContextMenu>
+        <ListView.View>
+          <GridView x:Name="GridCollectionData" />
+        </ListView.View>
+      </ListView>
+    </Grid>
+  </DockPanel>
 </Window>

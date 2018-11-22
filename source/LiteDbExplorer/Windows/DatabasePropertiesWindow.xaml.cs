@@ -60,7 +60,7 @@ namespace LiteDbExplorer.Windows
         {
             if (InputBoxWindow.ShowDialog("New password, enter empty string to remove password.", "", "", out string password) == true)
             {
-                if (string.IsNullOrEmpty(password))
+                if (String.IsNullOrEmpty(password))
                 {
                     Database.Shrink(null);
                 }
