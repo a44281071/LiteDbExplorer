@@ -32,7 +32,7 @@ namespace LiteDbExplorer.Controls
       {
         var button = new Button()
         {
-          Content = "Array"
+          Content = $"Array({bindingValue.AsArray.Count})"
         };
 
         button.Click += (s, a) =>
@@ -77,7 +77,7 @@ namespace LiteDbExplorer.Controls
       {
         var button = new Button()
         {
-          Content = "Document"
+          Content = $"Document({bindingValue.AsDocument.Count})"
         };
 
         button.Click += (s, a) =>

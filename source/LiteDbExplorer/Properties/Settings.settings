@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="DefaultPassword" Type="System.String" Scope="User">
-      <Value Profile="(Default)">grandmaster</Value>
+      <Value Profile="(Default)">password</Value>
     </Setting>
   </Settings>
 </SettingsFile>

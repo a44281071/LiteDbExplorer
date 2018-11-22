@@ -26,11 +26,11 @@ namespace LiteDbExplorer.Converters
         var bsonValue = value as BsonValue;
         if (bsonValue.IsDocument)
         {
-          return "[Document]";
+          return $"[Document({bsonValue.AsDocument.Count})]";
         }
         else if (bsonValue.IsArray)
         {
-          return "[Array]";
+          return $"[Array({bsonValue.AsArray.Count})]";
         }
         else if (bsonValue.IsBinary)
         {
